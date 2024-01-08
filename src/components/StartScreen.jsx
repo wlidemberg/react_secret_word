@@ -1,6 +1,6 @@
 import styles from './StartScreen.module.css'
 
-const StartScreen = () => {
+const StartScreen = ({startGame}) => {
   return (
     <div>
         <header>
@@ -8,7 +8,7 @@ const StartScreen = () => {
         </header>
         <section className={styles.section_start_game}>
             <p>Bem vindo ao Jogo Secret Word, inicie um novo jogo e divirta-se</p>
-            <button className={styles.btn_start}>Iniciar Novo Jogo</button>
+            <button className={styles.btn_start} onClick={startGame}>Iniciar Novo Jogo</button>
         </section>
     </div>
   )
