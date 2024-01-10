@@ -44,10 +44,10 @@ function App() {
   const [wrongAttempts, setWrongAttempts] = useState(attempsQtda)
 
   // user score
-  const [score, setScore] = useState(0)
+  const [score, setScore] = useState(100)
 
   // fuction pick word and category
-  const pickWordAndCategory = () => {
+  const pickWordAndCategory = useCallback(() => {
     // armazenando as chaves da lista arrays
     const categories = Object.keys(words)
     // pick a random category
@@ -59,10 +59,13 @@ function App() {
     console.log(word)
 
     return { word, category }
-  }
+  }, [words])
   
   // start of the secret word game
-  const startGame = () => {
+  const startGame = useCallback(() => {
+    // clear all letters
+    clearLetterStates()
+
     // pick word and pick category
     const { word, category } = pickWordAndCategory()
     
@@ -80,7 +83,7 @@ function App() {
 
 
     setGameStage(stages[1].name)
-  }
+  }, [pickWordAndCategory])
 
   //process the letter input
   const verifyLetter = (letter) => {
@@ -108,6 +111,7 @@ function App() {
     setWrongLetters([])
   }
 
+  // check if guesses ended
   useEffect(() => {
     if(wrongAttempts <= 0){
       // reset all states
@@ -117,8 +121,22 @@ function App() {
     }
   })
 
-  console.log(guessedLetters)
-  console.log(wrongLetters) 
+  // check win condition
+  useEffect(() => {
+    const uniqueLetters = [...new Set(letters)]
+    // win condition
+    if(guessedLetters.length === uniqueLetters.length){
+      setScore((actualScore) => actualScore += 100)
+
+      // restart game with new word
+      startGame() 
+    }
+
+
+    console.log(uniqueLetters)
+  }, [{/*Condição de Monitoramento*/}, guessedLetters, letters, startGame])
+
+
 
   // restarts the game
   const retry = () => {
@@ -146,7 +164,7 @@ function App() {
             wrongAttempts={wrongAttempts}
             score={score}
           />}
-          {gameStage === 'end' && <GameOver retry={retry} />}
+          {gameStage === 'end' && <GameOver retry={retry} score={score} />}
           
           
         </div>
